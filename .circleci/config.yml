@@ -1,0 +1,158 @@
+version: "2.1"
+orbs:
+  aws-eks: circleci/aws-eks@2.2.0
+  kubernetes: circleci/kubernetes@1.3
+  docker: circleci/docker@2.1.2
+  aws-cli: circleci/aws-cli@3.1.1
+jobs:
+  run-lint:
+    docker:
+      - image: "python:3.7.3-stretch"
+    steps:
+      - checkout
+      - run:
+          name: Run lint
+          command: |
+            . venv/bin/activate
+            make lint
+  build-push-blue-image:
+    executor: docker/docker
+    steps:
+      - setup_remote_docker
+      - checkout
+      - docker/build:
+          image: $DOCKER_USER/blue
+          tag: "1.0"
+      - run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - docker/push:
+          image: $DOCKER_USER/blue
+          tag: "1.0"
+  build-push-green-image:
+    executor: docker/docker
+    steps:
+      - setup_remote_docker
+      - checkout
+      - docker/build:
+          image: $DOCKER_USER/green
+          tag: "1.0"
+      - run: |
+          docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - docker/push:
+          image: $DOCKER_USER/green
+          tag: "1.0"
+  deploy-esk:
+    docker:
+      - image: "cimg/python:3.10"
+    steps:
+      - checkout
+      - aws-cli/setup
+      - aws-eks/create-cluster:
+          cluster-name: eks-capstone
+          nodegroup-name: eks-capstone-nodes
+          node-type: t3.medium
+          nodes-min: 2
+          nodes-max: 3
+
+  deploy-container-blue:
+    docker:
+      - image: "cimg/python:3.10"
+    steps:
+      - checkout
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: eks-capstone
+          install-kubectl: true
+      - run:
+          name: Test kubectl
+          command: |  
+            kubectl get services
+            kubectl get nodes
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: ".circleci/files/blue/deployment.yml"
+          resource-name: deployment/blue
+          show-kubectl-command: true
+      - run:
+          name: get deployment status
+          command: kubectl get svc capstone
+
+  deploy-container-green:
+    docker:
+      - image: "cimg/python:3.10"
+    steps:
+      - checkout
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: eks-capstone
+          install-kubectl: true
+      - run:
+          name: Test kubectl
+          command: |  
+            kubectl get services
+            kubectl get nodes
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: ".circleci/files/green/deployment.yml"
+          resource-name: deployment/green
+          show-kubectl-command: true
+      - run:
+          name: get deployment status
+          command: kubectl get svc capstone
+
+  deploy-application-blue:
+    docker:
+      - image: "cimg/python:3.10"
+    steps:
+      - checkout
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: eks-capstone
+          install-kubectl: true
+      - run:
+          name: Test kubectl
+          command: |  
+            kubectl get services
+            kubectl get nodes
+      - kubernetes/create-or-update-resource:
+          resource-file-path: ".circleci/files/blue/service.yml"
+          show-kubectl-command: true
+      - run:
+          name: get deployment status
+          command: kubectl get svc capstone
+
+  deploy-application-green:
+    docker:
+      - image: "cimg/python:3.10"
+    steps:
+      - checkout
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: eks-capstone
+          install-kubectl: true
+      - run:
+          name: Test kubectl
+          command: |  
+            kubectl get services
+            kubectl get nodes
+      - kubernetes/create-or-update-resource:
+          resource-file-path: ".circleci/files/green/service.yml"
+          show-kubectl-command: true
+      - run:
+          name: get deployment status
+          command: kubectl get svc capstone
+
+workflows:
+  deployment:
+    jobs:
+      - run-lint
+      - build-push-blue-image:
+          requires: [run-lint]
+      - build-push-green-image:
+          requires: [run-lint]
+      - deploy-eks:
+          requires: [push-green-image, push-blue-image]
+      - deploy-container-blue:
+          requires: [deploy-eks]
+      - deploy-container-green:
+          requires: [deploy-eks]
+      - deploy-application-blue:
+          requires: [deploy-container-blue, deploy-container-green]
+      - deploy-application-green:
+          requires: [deploy-application-blue]
