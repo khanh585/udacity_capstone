@@ -147,7 +147,7 @@ workflows:
       - build-push-green-image:
           requires: [run-lint]
       - deploy-eks:
-          requires: [push-green-image, push-blue-image]
+          requires: [build-push-blue-image, build-push-green-image]
       - deploy-container-blue:
           requires: [deploy-eks]
       - deploy-container-green:
