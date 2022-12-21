@@ -13,7 +13,6 @@ jobs:
       - run:
           name: Run lint
           command: |
-            . venv/bin/activate
             make lint
   build-push-blue-image:
     executor: docker/docker
