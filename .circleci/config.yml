@@ -34,12 +34,13 @@ jobs:
       - setup_remote_docker
       - checkout
       - docker/build:
-          path: ./docker/blue/Dockerfile
+          path: ./docker/blue
           image: $DOCKER_USER/blue
           tag: "1.0"
       - run: |
           docker login -u $DOCKER_USER -p $DOCKER_PASS
       - docker/push:
+          path: ./docker/blue
           image: $DOCKER_USER/blue
           tag: "1.0"
   build-push-green-image:
@@ -48,12 +49,13 @@ jobs:
       - setup_remote_docker
       - checkout
       - docker/build:
-          path: ./docker/green/Dockerfile
+          path: ./docker/green
           image: $DOCKER_USER/green
           tag: "1.0"
       - run: |
           docker login -u $DOCKER_USER -p $DOCKER_PASS
       - docker/push:
+          path: ./docker/green
           image: $DOCKER_USER/green
           tag: "1.0"
   deploy-eks:
