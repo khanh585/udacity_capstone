@@ -69,7 +69,7 @@ jobs:
           nodes-min: 2
           nodes-max: 3
 
-  deploy-container-blue:
+  deploy-application-blue:
     docker:
       - image: "cimg/python:3.10"
     steps:
@@ -87,45 +87,6 @@ jobs:
           resource-file-path: ".circleci/files/blue/deployment.yml"
           resource-name: deployment/blue
           show-kubectl-command: true
-      - run:
-          name: get deployment status
-          command: kubectl get svc blue
-
-  deploy-container-green:
-    docker:
-      - image: "cimg/python:3.10"
-    steps:
-      - checkout
-      - aws-eks/update-kubeconfig-with-authenticator:
-          cluster-name: eks-capstone
-          install-kubectl: true
-      - run:
-          name: Test kubectl
-          command: |  
-            kubectl get services
-            kubectl get nodes
-      - kubernetes/create-or-update-resource:
-          get-rollout-status: true
-          resource-file-path: ".circleci/files/green/deployment.yml"
-          resource-name: deployment/green
-          show-kubectl-command: true
-      - run:
-          name: get deployment status
-          command: kubectl get svc green
-
-  deploy-application-blue:
-    docker:
-      - image: "cimg/python:3.10"
-    steps:
-      - checkout
-      - aws-eks/update-kubeconfig-with-authenticator:
-          cluster-name: eks-capstone
-          install-kubectl: true
-      - run:
-          name: Test kubectl
-          command: |  
-            kubectl get services
-            kubectl get nodes
       - kubernetes/create-or-update-resource:
           resource-file-path: ".circleci/files/blue/service.yml"
           show-kubectl-command: true
@@ -147,6 +108,11 @@ jobs:
             kubectl get services
             kubectl get nodes
       - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: ".circleci/files/green/deployment.yml"
+          resource-name: deployment/green
+          show-kubectl-command: true
+      - kubernetes/create-or-update-resource:
           resource-file-path: ".circleci/files/green/service.yml"
           show-kubectl-command: true
       - run:
@@ -163,11 +129,7 @@ workflows:
           requires: [run-lint]
       - deploy-eks:
           requires: [build-push-blue-image, build-push-green-image]
-      - deploy-container-blue:
-          requires: [deploy-eks]
-      - deploy-container-green:
-          requires: [deploy-eks]
       - deploy-application-blue:
-          requires: [deploy-container-blue, deploy-container-green]
+          requires: [deploy-eks]
       - deploy-application-green:
-          requires: [deploy-application-blue]
+          requires: [deploy-eks]
