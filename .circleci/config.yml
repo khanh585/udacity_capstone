@@ -13,7 +13,7 @@ jobs:
       - run:
           name: Run lint
           command: |
-            make lint
+            tidy -q -e ./docker/blue/*.html
   build-push-blue-image:
     executor: docker/docker
     steps:
