@@ -52,6 +52,7 @@ jobs:
           image: $DOCKER_USER/green
           tag: "1.0"
       - run: |
+          echo $DOCKER_USER
           docker login -u $DOCKER_USER -p $DOCKER_PW
       - docker/push:
           image: $DOCKER_USER/green
