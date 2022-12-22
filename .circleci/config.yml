@@ -110,7 +110,7 @@ jobs:
           show-kubectl-command: true
       - run:
           name: get deployment status
-          command: kubectl get svc blue
+          command: kubectl get svc bluegreenlb
 
       # - destroy-environment:
       #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -138,7 +138,7 @@ jobs:
           show-kubectl-command: true
       - run:
           name: get deployment status
-          command: kubectl get svc green
+          command: kubectl get svc bluegreenlb
 
       # - destroy-environment:
       #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -146,14 +146,17 @@ jobs:
 workflows:
   deployment:
     jobs:
-      - run-lint
-      - build-push-blue-image:
-          requires: [run-lint]
-      - build-push-green-image:
-          requires: [run-lint]
-      - deploy-eks:
-          requires: [build-push-blue-image, build-push-green-image]
-      - deploy-application-blue:
-          requires: [deploy-eks]
-      - deploy-application-green:
-          requires: [deploy-eks]
+      # - run-lint
+      # - build-push-blue-image:
+      #     requires: [run-lint]
+      # - build-push-green-image:
+      #     requires: [run-lint]
+      # - deploy-eks:
+      #     requires: [build-push-blue-image, build-push-green-image]
+      # - deploy-application-blue:
+      #     requires: [deploy-eks]
+      # - deploy-application-green:
+      #     requires: [deploy-eks]
+
+      - deploy-application-blue
+      - deploy-application-green
