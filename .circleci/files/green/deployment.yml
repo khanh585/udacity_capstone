@@ -13,7 +13,7 @@ spec:
         app: green
     spec:
       containers:
-      - name: green
-        image: khanh585/green:1.0
-        ports:
-        - containerPort: 80
+        - name: green
+          image: khanh585/green:1.0
+          ports:
+            - containerPort: 80

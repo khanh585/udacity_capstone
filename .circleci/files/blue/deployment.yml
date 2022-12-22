@@ -13,7 +13,7 @@ spec:
         app: blue
     spec:
       containers:
-      - name: blue
-        image: khanh585/blue:1.0
-        ports:
-        - containerPort: 80
+        - name: blue
+          image: khanh585/blue:1.0
+          ports:
+            - containerPort: 80

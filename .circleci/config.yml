@@ -65,7 +65,7 @@ jobs:
       - aws-eks/create-cluster:
           cluster-name: eks-capstone
           nodegroup-name: eks-capstone-nodes
-          node-type: t3.medium
+          node-type: t2.micro
           nodes-min: 2
           nodes-max: 3
 
@@ -89,7 +89,7 @@ jobs:
           show-kubectl-command: true
       - run:
           name: get deployment status
-          command: kubectl get svc capstone
+          command: kubectl get svc blue
 
   deploy-container-green:
     docker:
@@ -111,7 +111,7 @@ jobs:
           show-kubectl-command: true
       - run:
           name: get deployment status
-          command: kubectl get svc capstone
+          command: kubectl get svc green
 
   deploy-application-blue:
     docker:
@@ -131,7 +131,7 @@ jobs:
           show-kubectl-command: true
       - run:
           name: get deployment status
-          command: kubectl get svc capstone
+          command: kubectl get svc blue
 
   deploy-application-green:
     docker:
@@ -151,7 +151,7 @@ jobs:
           show-kubectl-command: true
       - run:
           name: get deployment status
-          command: kubectl get svc capstone
+          command: kubectl get svc green
 
 workflows:
   deployment:
