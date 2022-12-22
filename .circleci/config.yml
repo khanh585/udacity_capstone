@@ -158,5 +158,5 @@ workflows:
       # - deploy-application-green:
       #     requires: [deploy-eks]
 
-      - deploy-application-blue
+      # - deploy-application-blue
       - deploy-application-green
