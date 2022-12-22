@@ -4,7 +4,6 @@ orbs:
   kubernetes: circleci/kubernetes@1.3
   docker: circleci/docker@2.1.2
   aws-cli: circleci/aws-cli@3.1.1
-  wait-for: cobli/wait-for@1.0.0
 
 executors:
   hadolint_executor:
@@ -129,6 +128,10 @@ jobs:
           command: |  
             kubectl get services
             kubectl get nodes
+      - run:
+          name: Test Load Balancer endpoint
+          command: |
+            sleep 30
       - kubernetes/create-or-update-resource:
           get-rollout-status: true
           resource-file-path: ".circleci/files/green/deployment.yml"
@@ -153,12 +156,11 @@ jobs:
 workflows:
   deployment:
     jobs:
-      - wait-3min
       - run-lint
-      # - build-push-blue-image:
-      #     requires: [run-lint]
-      # - build-push-green-image:
-      #     requires: [run-lint]
+      - build-push-blue-image:
+          requires: [run-lint]
+      - build-push-green-image:
+          requires: [run-lint]
       # - deploy-eks:
       #     requires: [build-push-blue-image, build-push-green-image]
       # - deploy-application-blue:
@@ -166,5 +168,5 @@ workflows:
       # - deploy-application-green:
       #     requires: [deploy-eks]
 
-      # - deploy-application-blue
-      # - deploy-application-green
+      - deploy-application-blue
+      - deploy-application-green
