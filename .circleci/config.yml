@@ -35,12 +35,12 @@ jobs:
       - checkout
       - docker/build:
           path: ./docker/blue
-          image: $DOCKER_USER/blue
+          image: khanh585/blue
           tag: "1.0"
       - run: |
           docker login -u $DOCKER_USER -p $DOCKER_PW
       - docker/push:
-          image: $DOCKER_USER/blue
+          image: khanh585/blue
           tag: "1.0"
   build-push-green-image:
     executor: docker/docker
@@ -49,13 +49,12 @@ jobs:
       - checkout
       - docker/build:
           path: ./docker/green
-          image: $DOCKER_USER/green
+          image: khanh585/green
           tag: "1.0"
       - run: |
-          echo $DOCKER_USER
           docker login -u $DOCKER_USER -p $DOCKER_PW
       - docker/push:
-          image: $DOCKER_USER/green
+          image: khanh585/green
           tag: "1.0"
   deploy-eks:
     docker:
