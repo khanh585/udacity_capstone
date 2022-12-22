@@ -14,8 +14,11 @@ orbs:
 jobs:
   run-lint:
     executor: hadolint_executor
-    steps:
-      - run_dockerfile_lint
+    - checkout
+    - run:
+        name: Dockerfile Lint
+        command: |
+          hadolint Dockerfile
     # docker:
     #   - image: "python:3.7.3-stretch"
     # steps:
