@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: blue
-          image: khanh585/blue:1.0
+          image: khanh585/green:1.0
           ports:
             - containerPort: 80

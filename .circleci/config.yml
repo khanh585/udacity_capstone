@@ -139,4 +139,5 @@ workflows:
       # - deploy-application-blue:
       #     requires:  [build-push-green-image]
       #     # requires: [deploy-eks]
-      - deploy-application-green
+      - deploy-application-green:
+          requires:  [build-push-green-image]
