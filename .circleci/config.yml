@@ -34,7 +34,7 @@ jobs:
       - setup_remote_docker
       - checkout
       - docker/build:
-          file: ./docker/blue/Dockerfile
+          path: ./docker/blue/Dockerfile
           image: $DOCKER_USER/blue
           tag: "1.0"
       - run: |
@@ -48,7 +48,7 @@ jobs:
       - setup_remote_docker
       - checkout
       - docker/build:
-          file: ./docker/green/Dockerfile
+          path: ./docker/green/Dockerfile
           image: $DOCKER_USER/green
           tag: "1.0"
       - run: |
