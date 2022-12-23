@@ -127,16 +127,13 @@ jobs:
 workflows:
   deployment:
     jobs:
-      # - run-lint
-      # - build-push-blue-image:
-      #     requires: [run-lint]
-      # - build-push-green-image:
-      #     requires: [run-lint]
-      # - deploy-eks
-      # - deploy-application-blue:
-      #     requires: [deploy-eks]
-      # - deploy-application-green:
-      #     requires: [deploy-application-blue]
-
-      - deploy-application-blue
-      - deploy-application-green
+      - run-lint
+      - build-push-blue-image:
+          requires: [run-lint]
+      - build-push-green-image:
+          requires: [run-lint]
+      - deploy-eks
+      - deploy-application-blue:
+          requires: [deploy-eks]
+      - deploy-application-green:
+          requires: [deploy-application-blue]
