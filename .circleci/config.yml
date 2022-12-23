@@ -88,13 +88,16 @@ jobs:
           resource-file-path: ".circleci/files/blue/deployment.yml"
           resource-name: deployment/blue
           show-kubectl-command: true
-      - kubernetes/create-or-update-resource:
+      -   e:
           resource-file-path: ".circleci/files/blue/service.yml"
           show-kubectl-command: true
       - run:
           name: get deployment status
           command: kubectl get svc bluegreenlb
-
+      - kubernetes/delete-resource:
+          resource-names: deployment/green
+          now: true
+          wait: true
 
   deploy-application-green:
     docker:
@@ -124,21 +127,22 @@ jobs:
       - run:
           name: get deployment status
           command: kubectl get svc bluegreenlb
+      - kubernetes/delete-resource:
+          resource-names: deployment/blue
+          now: true
+          wait: true
 
 
 workflows:
   deployment:
     jobs:
-      # - run-lint
-      # - build-push-blue-image:
-      #     requires: [run-lint]
-      # - build-push-green-image:
-      #     requires: [run-lint]
-      # - deploy-eks
-      # - deploy-application-blue:
-      #     requires: [deploy-eks]
-      # - deploy-application-green:
-      #     requires: [deploy-application-blue]
-
-      - deploy-application-blue
-
+      - run-lint
+      - build-push-blue-image:
+          requires: [run-lint]
+      - build-push-green-image:
+          requires: [run-lint]
+      - deploy-eks
+      - deploy-application-blue:
+          requires: [deploy-eks]
+      - deploy-application-green:
+          requires: [deploy-application-blue]
