@@ -130,7 +130,7 @@ workflows:
   deployment:
     jobs:
       # - run-lint
-      # - build-push-blue-image:
+      - build-push-blue-image
       #     requires: [run-lint]
       # - build-push-green-image:
       #     requires: [run-lint]
