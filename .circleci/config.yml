@@ -134,9 +134,8 @@ workflows:
           requires: [run-lint]
       - build-push-green-image:
           requires: [run-lint]
-      - deploy-eks:
-          requires: [build-push-blue-image, build-push-green-image]
+      - deploy-eks
       - deploy-application-blue:
-          # requires: [deploy-eks]
+          requires: [deploy-eks]
       - deploy-application-green:
-          requires:  [deploy-application-blue]
+          requires: [deploy-application-blue]
