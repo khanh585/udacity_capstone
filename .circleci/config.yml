@@ -83,11 +83,11 @@ jobs:
           command: |  
             kubectl get services
             kubectl get nodes
-      # - kubernetes/create-or-update-resource:
-      #     get-rollout-status: true
-      #     resource-file-path: ".circleci/files/blue/deployment.yml"
-      #     resource-name: deployment/blue
-      #     show-kubectl-command: true
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: ".circleci/files/blue/deployment.yml"
+          resource-name: deployment/blue
+          show-kubectl-command: true
       - kubernetes/create-or-update-resource:
           resource-file-path: ".circleci/files/blue/service.yml"
           show-kubectl-command: true
